@@ -65,11 +65,13 @@ Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJi
 
 const viewer=new Cesium.Viewer("cesiumContainer",{
 
-terrain:Cesium.Terrain.fromWorldTerrain(),
+terrainProvider: await Cesium.createWorldTerrainAsync(),
 
-imageryProvider:new Cesium.OpenStreetMapImageryProvider({
-url:"https://a.tile.openstreetmap.org/"
-}),
+baseLayer: new Cesium.ImageryLayer(
+    new Cesium.OpenStreetMapImageryProvider({
+        url: "https://a.tile.openstreetmap.org/"
+    })
+),
 
 timeline:false,
 animation:false,
@@ -86,7 +88,7 @@ viewer.camera.flyTo({
 destination:Cesium.Cartesian3.fromDegrees(
 -9.094,
 38.769,
-2000
+4000
 ),
 
 orientation:{
