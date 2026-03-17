@@ -29,6 +29,8 @@ padding:15px;
 font-family:Arial;
 border-radius:8px;
 width:220px;
+max-width:220px;
+z-index:1000;
 }
 
 input{
@@ -65,9 +67,17 @@ Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJi
 
 const viewer = new Cesium.Viewer("cesiumContainer", {
 
-imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-url: "https://a.tile.openstreetmap.org/"
+imageryProvider: new Cesium.UrlTemplateImageryProvider({
+url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 }),
+
+baseLayerPicker:false,
+timeline:false,
+animation:false,
+geocoder:true,
+homeButton:false
+
+});
 
 baseLayerPicker:false,
 timeline:false,
@@ -78,17 +88,13 @@ animation:false
 
 // posicionar câmara em Lisboa
 
-viewer.camera.flyTo({
+viewer.camera.setView({
 
 destination: Cesium.Cartesian3.fromDegrees(
 -9.094,
 38.769,
-2500
-),
-
-orientation:{
-pitch: Cesium.Math.toRadians(-40)
-}
+20000
+)
 
 });
 
