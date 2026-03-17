@@ -61,43 +61,33 @@ width:100%;
 
 <script>
 
-async function init(){
-
 Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMTRlMWY3OC02M2E0LTQ4YmYtODZkMi00MTk5NTE3NmFmOWQiLCJpZCI6NDA1MTY2LCJpYXQiOjE3NzM3NjQyNDB9.yVJ97_M8bhtRfK0Z5fqIsFrcS00iCQ6IiCZ0zYCuG-g";
 
-
-const viewer = new Cesium.Viewer("cesiumContainer",{
-
-terrainProvider: await Cesium.createWorldTerrainAsync(),
+const viewer = new Cesium.Viewer("cesiumContainer", {
 
 imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-url:"https://a.tile.openstreetmap.org/"
+url: "https://a.tile.openstreetmap.org/"
 }),
 
+baseLayerPicker:false,
 timeline:false,
-animation:false,
-baseLayerPicker:false
+animation:false
 
 });
 
 
-viewer.scene.globe.enableLighting=true;
-
-
-// posição inicial (Parque das Nações)
+// posicionar câmara em Lisboa
 
 viewer.camera.flyTo({
 
-destination:Cesium.Cartesian3.fromDegrees(
+destination: Cesium.Cartesian3.fromDegrees(
 -9.094,
 38.769,
-3500
+2500
 ),
 
 orientation:{
-heading:Cesium.Math.toRadians(0),
-pitch:Cesium.Math.toRadians(-40),
-roll:0
+pitch: Cesium.Math.toRadians(-40)
 }
 
 });
@@ -105,11 +95,12 @@ roll:0
 
 // edifícios
 
-const buildings = await Cesium.createOsmBuildings();
+Cesium.createOsmBuildings().then(function(buildings){
 viewer.scene.primitives.add(buildings);
+});
 
 
-// partículas de vento
+// partículas
 
 const particles=[];
 
@@ -119,7 +110,7 @@ constructor(){
 
 this.lon=-9.11+Math.random()*0.04;
 this.lat=38.76+Math.random()*0.02;
-this.alt=100+Math.random()*100;
+this.alt=150+Math.random()*150;
 
 this.entity=viewer.entities.add({
 
@@ -159,21 +150,16 @@ this.lon,this.lat,this.alt
 }
 
 
-// criar partículas
-
-for(let i=0;i<600;i++){
-
+for(let i=0;i<500;i++){
 particles.push(new Particle())
-
 }
 
 
-// controlos UI
+// sliders
 
 const speedSlider=document.getElementById("windSpeed");
 const dirSlider=document.getElementById("windDir");
 const readout=document.getElementById("readout");
-
 
 viewer.clock.onTick.addEventListener(function(){
 
@@ -187,10 +173,6 @@ readout.innerHTML=
 particles.forEach(p=>p.update(speed,dir));
 
 });
-
-}
-
-init();
 
 </script>
 
