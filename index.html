@@ -23,7 +23,7 @@ overflow:hidden;
 position:absolute;
 top:15px;
 left:15px;
-background:rgba(0,0,0,0.7);
+background:rgba(0,0,0,0.75);
 color:white;
 padding:15px;
 font-family:Arial;
@@ -61,17 +61,18 @@ width:100%;
 
 <script>
 
+async function init(){
+
 Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMTRlMWY3OC02M2E0LTQ4YmYtODZkMi00MTk5NTE3NmFmOWQiLCJpZCI6NDA1MTY2LCJpYXQiOjE3NzM3NjQyNDB9.yVJ97_M8bhtRfK0Z5fqIsFrcS00iCQ6IiCZ0zYCuG-g";
 
-const viewer=new Cesium.Viewer("cesiumContainer",{
+
+const viewer = new Cesium.Viewer("cesiumContainer",{
 
 terrainProvider: await Cesium.createWorldTerrainAsync(),
 
-baseLayer: new Cesium.ImageryLayer(
-    new Cesium.OpenStreetMapImageryProvider({
-        url: "https://a.tile.openstreetmap.org/"
-    })
-),
+imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+url:"https://a.tile.openstreetmap.org/"
+}),
 
 timeline:false,
 animation:false,
@@ -79,20 +80,22 @@ baseLayerPicker:false
 
 });
 
+
 viewer.scene.globe.enableLighting=true;
 
 
-// posição inicial
+// posição inicial (Parque das Nações)
+
 viewer.camera.flyTo({
 
 destination:Cesium.Cartesian3.fromDegrees(
 -9.094,
 38.769,
-4000
+3500
 ),
 
 orientation:{
-heading:0,
+heading:Cesium.Math.toRadians(0),
 pitch:Cesium.Math.toRadians(-40),
 roll:0
 }
@@ -100,10 +103,10 @@ roll:0
 });
 
 
-// edifícios 3D
-Cesium.createOsmBuildings().then(function(buildings){
+// edifícios
+
+const buildings = await Cesium.createOsmBuildings();
 viewer.scene.primitives.add(buildings);
-});
 
 
 // partículas de vento
@@ -159,29 +162,35 @@ this.lon,this.lat,this.alt
 // criar partículas
 
 for(let i=0;i<600;i++){
+
 particles.push(new Particle())
+
 }
 
 
-// controlo vento
+// controlos UI
 
 const speedSlider=document.getElementById("windSpeed");
 const dirSlider=document.getElementById("windDir");
 const readout=document.getElementById("readout");
 
+
 viewer.clock.onTick.addEventListener(function(){
 
-const speed=speedSlider.value;
-const dir=dirSlider.value;
+const speed=parseFloat(speedSlider.value);
+const dir=parseFloat(dirSlider.value);
 
 readout.innerHTML=
-
 "Wind: "+speed+" km/h<br>"+
 "Direction: "+dir+"°";
 
 particles.forEach(p=>p.update(speed,dir));
 
 });
+
+}
+
+init();
 
 </script>
 
